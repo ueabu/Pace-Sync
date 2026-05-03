@@ -1,0 +1,7 @@
+{
+  "name": "pacelist",
+  "private": true,
+  "scripts": {
+    "test": "bun test"
+  }
+}
