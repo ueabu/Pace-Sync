@@ -1,8 +1,9 @@
 import Link from "next/link";
 
+import { HomeCourseIsland } from "@/components/home/HomeCourseIsland";
+import { Button } from "@/components/ui/button";
 import { getSession } from "@/lib/auth/session";
 import { SPOTIFY_AUTH_PATH } from "@/lib/spotify/constants";
-import { Button } from "@/components/ui/button";
 
 export default async function Home() {
   const session = await getSession();
@@ -46,6 +47,8 @@ export default async function Home() {
           </>
         )}
       </div>
+
+      <HomeCourseIsland />
     </div>
   );
 }
