@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getSession } from "@/lib/auth/session";
+import { SPOTIFY_AUTH_PATH } from "@/lib/spotify/constants";
 import {
   fetchUserPlaylists,
 } from "@/lib/spotify/playlists";
@@ -28,7 +29,7 @@ export default async function PlaylistsPage() {
           yet. Finish connecting, then refresh this page.
         </p>
         <Button asChild>
-          <a href="/api/auth/spotify/start">Connect Spotify</a>
+          <a href={SPOTIFY_AUTH_PATH}>Connect Spotify</a>
         </Button>
       </div>
     );
@@ -67,7 +68,7 @@ export default async function PlaylistsPage() {
         >
           {error}{" "}
           <Link
-            href="/api/auth/spotify/start"
+            href={SPOTIFY_AUTH_PATH}
             className="font-medium text-accent underline-offset-2 hover:underline"
           >
             Reconnect

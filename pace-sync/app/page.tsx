@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { getSession } from "@/lib/auth/session";
+import { SPOTIFY_AUTH_PATH } from "@/lib/spotify/constants";
 import { Button } from "@/components/ui/button";
 
 export default async function Home() {
@@ -36,7 +37,7 @@ export default async function Home() {
         ) : (
           <>
             <Button asChild size="lg" className="w-full sm:w-auto">
-              <a href="/api/auth/spotify/start">Connect Spotify</a>
+              <a href={SPOTIFY_AUTH_PATH}>Connect Spotify</a>
             </Button>
             <p className="text-sm text-black/55 sm:max-w-xs">
               One login. Then import a playlist and start placing it on your

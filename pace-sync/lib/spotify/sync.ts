@@ -7,20 +7,39 @@ import type {
   ReplacePlaylistTracksResult,
 } from "@/lib/spotify/types";
 
-// TODO(sync-workstream): Implement with Spotify Web API (create user playlist + add tracks in batches).
+import {
+  createPlaylist as spotifyCreateUserPlaylist,
+  replacePlaylistTracks as spotifyReplacePlaylistTracks,
+} from "./playlists";
 
-export async function createPlaylist(
-  _input: CreatePlaylistInput,
-): Promise<CreatePlaylistResult> {
-  void _input;
-  throw new Error("createPlaylist is not implemented yet");
+function urisToTrackIds(uris: string[]): string[] {
+  return uris.map((u) =>
+    u.startsWith("spotify:track:") ? u.slice("spotify:track:".length) : u,
+  );
 }
 
-// TODO(sync-workstream): PUT https://api.spotify.com/v1/playlists/{playlist_id}/tracks
+/** Create a new playlist and write the ordered track URIs via the Web API (cookie session). */
+export async function createPlaylist(
+  input: CreatePlaylistInput,
+): Promise<CreatePlaylistResult> {
+  void input.accessToken;
+  const { id } = await spotifyCreateUserPlaylist({ name: input.name });
+  const ids = urisToTrackIds(input.trackUris);
+  await spotifyReplacePlaylistTracks(id, ids);
+  return {
+    playlistId: id,
+    spotifyUrl: `https://open.spotify.com/playlist/${id}`,
+  };
+}
 
+/** Replace tracks in an existing playlist (cookie session). */
 export async function replacePlaylistTracks(
-  _input: ReplacePlaylistTracksInput,
+  input: ReplacePlaylistTracksInput,
 ): Promise<ReplacePlaylistTracksResult> {
-  void _input;
-  throw new Error("replacePlaylistTracks is not implemented yet");
+  void input.accessToken;
+  const ids = urisToTrackIds(input.trackUris);
+  await spotifyReplacePlaylistTracks(input.playlistId, ids);
+  return {
+    spotifyUrl: `https://open.spotify.com/playlist/${input.playlistId}`,
+  };
 }
