@@ -6,6 +6,7 @@ import type {
   SpotifyPlaylistTrackItem,
   SpotifyTrackObject,
 } from "./raw-types";
+import type { SpotifyPlaylistSummary } from "./types";
 
 import { spotifyFetchJson } from "./http";
 import { toTrack } from "./map-track";
@@ -44,6 +45,37 @@ async function paginateCollection<T>(
     nextUrl = page.next;
   }
   return items;
+}
+
+export async function fetchUserPlaylists(
+  accessToken: string,
+): Promise<SpotifyPlaylistSummary[]> {
+  const raw = await paginateCollection<SpotifyPlaylistSimplified>(
+    accessToken,
+    "/v1/me/playlists",
+  );
+  return raw.map((p) => ({
+    id: p.id,
+    name: p.name,
+    coverUrl: p.images?.[0]?.url ?? null,
+    trackCount: p.tracks?.total ?? 0,
+  }));
+}
+
+export async function fetchPlaylistTrackUris(
+  accessToken: string,
+  playlistId: string,
+): Promise<string[]> {
+  const rows = await paginateCollection<SpotifyPlaylistTrackItem>(
+    accessToken,
+    `/v1/playlists/${encodeURIComponent(playlistId)}/tracks`,
+  );
+  const uris: string[] = [];
+  for (const row of rows) {
+    const uri = row.track?.uri;
+    if (uri?.startsWith("spotify:track:")) uris.push(uri);
+  }
+  return uris;
 }
 
 export async function getUserPlaylists(): Promise<PlaylistSummary[]> {

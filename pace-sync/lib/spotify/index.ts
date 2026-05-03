@@ -2,10 +2,16 @@ import "server-only";
 
 export type { Track, PlaylistSummary } from "@/lib/types";
 
-export {
-  SPOTIFY_AUTH_PATH,
-  SPOTIFY_SCOPES,
-} from "./constants";
+export type {
+  SpotifyPlaylistSummary,
+  CreatePlaylistInput,
+  CreatePlaylistResult,
+  ReplacePlaylistTracksInput,
+  ReplacePlaylistTracksResult,
+  SpotifySearchTrack,
+} from "./types";
+
+export { SPOTIFY_AUTH_PATH, SPOTIFY_SCOPES } from "./constants";
 
 export {
   SPOTIFY_OAUTH_PENDING_COOKIE,
@@ -20,10 +26,11 @@ export {
   searchTracks,
   createPlaylist,
   replacePlaylistTracks,
+  fetchUserPlaylists,
+  fetchPlaylistTrackUris,
 } from "./playlists";
 
-export { spotifyFetch, spotifyFetchJson } from "./http";
+export { spotifyFetch, spotifyFetchJson, SpotifyApiError } from "./http";
 export { toTrack } from "./map-track";
 
 export { searchSpotifyTracks } from "./search";
-export type { SpotifySearchTrack } from "./types";

@@ -9,11 +9,14 @@ import {
 
 import { cookies } from "next/headers";
 
+import { SPOTIFY_SESSION_COOKIE } from "./cookie-names";
 import { getSpotifyEnv } from "./env";
 import { refreshAccessTokens } from "./oauth-accounts";
 
-export const SPOTIFY_OAUTH_PENDING_COOKIE = "spotify_oauth_pending";
-export const SPOTIFY_SESSION_COOKIE = "spotify_session";
+export {
+  SPOTIFY_OAUTH_PENDING_COOKIE,
+  SPOTIFY_SESSION_COOKIE,
+} from "./cookie-names";
 
 const SEAL_VERSION = 1;
 
@@ -154,10 +157,15 @@ export function cookieOptionsSession() {
 
 /** Read decrypted Spotify session from cookies (no refresh). */
 export async function readSpotifySessionCookie(): Promise<SpotifySessionPayload | null> {
-  const { sessionSecret } = getSpotifyEnv();
   const jar = await cookies();
   const raw = jar.get(SPOTIFY_SESSION_COOKIE)?.value;
   if (!raw) return null;
+  let sessionSecret: string;
+  try {
+    sessionSecret = getSpotifyEnv().sessionSecret;
+  } catch {
+    return null;
+  }
   return parseSpotifySession(raw, sessionSecret);
 }
 

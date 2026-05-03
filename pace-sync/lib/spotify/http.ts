@@ -5,6 +5,16 @@ import { SPOTIFY_API_BASE } from "./constants";
 const DEFAULT_RETRIES = 3;
 const RETRY_AFTER_CAP_SECONDS = 60;
 
+export class SpotifyApiError extends Error {
+  readonly status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "SpotifyApiError";
+    this.status = status;
+  }
+}
+
 function resolveUrl(pathOrAbsolute: string): string {
   if (
     pathOrAbsolute.startsWith("http://") ||
@@ -69,8 +79,9 @@ export async function spotifyFetchJson<T>(
   const res = await spotifyFetch(accessToken, pathOrAbsolute, init);
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(
+    throw new SpotifyApiError(
       `Spotify API ${res.status} ${res.statusText}${text ? `: ${text.slice(0, 280)}` : ""}`,
+      res.status,
     );
   }
   if (res.status === 204) {

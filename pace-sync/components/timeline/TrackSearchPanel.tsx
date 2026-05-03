@@ -21,8 +21,6 @@ export function TrackSearchPanel() {
 
   useEffect(() => {
     if (!debounced) {
-      setResults([]);
-      setError(null);
       return;
     }
 
@@ -50,6 +48,9 @@ export function TrackSearchPanel() {
     return () => ctrl.abort();
   }, [debounced]);
 
+  const visibleResults = debounced ? results : [];
+  const visibleError = debounced ? error : null;
+
   return (
     <aside className="flex w-full flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 lg:max-w-sm lg:shrink-0">
       <div>
@@ -70,14 +71,14 @@ export function TrackSearchPanel() {
         onChange={(e) => setQuery(e.target.value)}
       />
       <div className="min-h-0 flex-1">
-        {loading ? (
+        {debounced && loading ? (
           <p className="text-sm text-zinc-500 dark:text-zinc-400">Searching…</p>
         ) : null}
-        {error ? (
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+        {debounced && visibleError ? (
+          <p className="text-sm text-red-600 dark:text-red-400">{visibleError}</p>
         ) : null}
         <ul className="mt-2 max-h-72 space-y-2 overflow-y-auto sm:mx-0 sm:max-h-96">
-          {results.map((t) => (
+          {visibleResults.map((t) => (
             <li
               key={t.id}
               className="flex gap-2 rounded-xl border border-zinc-100 bg-zinc-50 p-2 dark:border-zinc-800 dark:bg-zinc-900/40"
@@ -100,7 +101,7 @@ export function TrackSearchPanel() {
             </li>
           ))}
         </ul>
-        {!loading && debounced && results.length === 0 && !error ? (
+        {!loading && debounced && visibleResults.length === 0 && !visibleError ? (
           <p className="text-sm text-zinc-500 dark:text-zinc-400">
             No results.
           </p>
