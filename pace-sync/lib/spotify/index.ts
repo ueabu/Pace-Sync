@@ -24,3 +24,6 @@ export {
 
 export { spotifyFetch, spotifyFetchJson } from "./http";
 export { toTrack } from "./map-track";
+
+export { searchSpotifyTracks } from "./search";
+export type { SpotifySearchTrack } from "./types";
